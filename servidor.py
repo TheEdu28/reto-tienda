@@ -29,7 +29,7 @@ class PagosServicio(pagos_pb2_grpc.PagosServicer):
         return pagos_pb2.EstadoPago(
             pedido=request.pedido,
             pagado=pagado,
-            monto=monto
+            monto_centavos=monto
         )
 
     def SeguirCobro(self, request, context):
