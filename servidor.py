@@ -19,20 +19,20 @@ PASOS = ["Validando datos", "Autorizando con el banco", "Cobro aprobado"]
 class PagosServicio(pagos_pb2_grpc.PagosServicer):
 
     def ConsultarPago(self, request, context):
-        # UNARIO: regresa UNA caja con return
-        # Si el pedido no existe: context.abort(grpc.StatusCode.NOT_FOUND, ...)
-        # Si existe: regresa un pagos_pb2.EstadoPago con pedido, pagado y monto.
         if request.pedido not in PEDIDOS:
-            context.abort(grpc.StatusCode.NOT_FOUND, "Pedido no encontrado")
-
+            context.abort(
+                grpc.StatusCode.NOT_FOUND, 
+                f"Pedido no encontrado: {request.pedido}"
+            )
+        
         pagado, monto = PEDIDOS[request.pedido]
         return pagos_pb2.EstadoPago(
             pedido=request.pedido,
             pagado=pagado,
-            monto_centavos=monto,
+            monto=monto
         )
 
-def SeguirCobro(self, request, context):
+    def SeguirCobro(self, request, context):
         if request.monto_centavos <= 0:
             context.abort(
                 grpc.StatusCode.INVALID_ARGUMENT, 
@@ -41,8 +41,10 @@ def SeguirCobro(self, request, context):
 
         for numero, descripcion in enumerate(PASOS, start=1):
             time.sleep(1)
-            # CORRECCIÓN AQUÍ: usar 'paso=' en lugar de 'mensaje='
-            yield pagos_pb2.PasoCobro(numero=numero, paso=descripcion)
+            yield pagos_pb2.PasoCobro(
+                numero=numero,
+                paso=descripcion
+            )
 
 
 servidor = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
