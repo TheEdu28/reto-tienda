@@ -32,20 +32,17 @@ class PagosServicio(pagos_pb2_grpc.PagosServicer):
             monto_centavos=monto,
         )
 
-def SeguirCobro(self, request, context):
-        # STREAMING: entrega VARIAS cajas con yield
+ddef SeguirCobro(self, request, context):
         if request.monto_centavos <= 0:
             context.abort(
-                grpc.StatusCode.INVALID_ARGUMENT,
-                "El monto en centavos debe ser mayor a 0."
+                grpc.StatusCode.INVALID_ARGUMENT, 
+                f"El monto debe ser mayor a 0: {request.monto_centavos}"
             )
 
-        for i, paso in enumerate(PASOS, start=1):
+        for numero, descripcion in enumerate(PASOS, start=1):
             time.sleep(1)
-            yield pagos_pb2.PasoCobro(
-                numero=i,
-                mensaje=paso
-            )
+            # CORRECCIÓN AQUÍ: usar 'paso=' en lugar de 'mensaje='
+            yield pagos_pb2.PasoCobro(numero=numero, paso=descripcion)
 
 
 servidor = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
