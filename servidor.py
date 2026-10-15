@@ -20,10 +20,24 @@ class PagosServicio(pagos_pb2_grpc.PagosServicer):
 
     def ConsultarPago(self, request, context):
         # UNARIO: regresa UNA caja con return
+<<<<<<< HEAD
         # TODO
         # Si el pedido no existe: context.abort(grpc.StatusCode.NOT_FOUND, ...)
         # Si existe: regresa un pagos_pb2.EstadoPago con pedido, pagado y monto.
         context.abort(grpc.StatusCode.UNIMPLEMENTED, "Falta implementar ConsultarPago")
+=======
+        # Si el pedido no existe: context.abort(grpc.StatusCode.NOT_FOUND, ...)
+        # Si existe: regresa un pagos_pb2.EstadoPago con pedido, pagado y monto.
+        if request.pedido not in PEDIDOS:
+            context.abort(grpc.StatusCode.NOT_FOUND, "Pedido no encontrado")
+
+        pagado, monto = PEDIDOS[request.pedido]
+        return pagos_pb2.EstadoPago(
+            pedido=request.pedido,
+            pagado=pagado,
+            monto_centavos=monto,
+        )
+>>>>>>> 2ea9acfb67c39d85b06970a794b3c0f652bd9f33
 
     def SeguirCobro(self, request, context):
         # STREAMING: entrega VARIAS cajas con yield
