@@ -20,12 +20,6 @@ class PagosServicio(pagos_pb2_grpc.PagosServicer):
 
     def ConsultarPago(self, request, context):
         # UNARIO: regresa UNA caja con return
-<<<<<<< HEAD
-        # TODO
-        # Si el pedido no existe: context.abort(grpc.StatusCode.NOT_FOUND, ...)
-        # Si existe: regresa un pagos_pb2.EstadoPago con pedido, pagado y monto.
-        context.abort(grpc.StatusCode.UNIMPLEMENTED, "Falta implementar ConsultarPago")
-=======
         # Si el pedido no existe: context.abort(grpc.StatusCode.NOT_FOUND, ...)
         # Si existe: regresa un pagos_pb2.EstadoPago con pedido, pagado y monto.
         if request.pedido not in PEDIDOS:
@@ -37,14 +31,21 @@ class PagosServicio(pagos_pb2_grpc.PagosServicer):
             pagado=pagado,
             monto_centavos=monto,
         )
->>>>>>> 2ea9acfb67c39d85b06970a794b3c0f652bd9f33
 
-    def SeguirCobro(self, request, context):
+def SeguirCobro(self, request, context):
         # STREAMING: entrega VARIAS cajas con yield
-        # TODO
-        # Si monto_centavos es 0 o menor: context.abort(grpc.StatusCode.INVALID_ARGUMENT, ...)
-        # Si no: por cada paso de PASOS, espera 1 s y haz yield de un pagos_pb2.PasoCobro (numero 1, 2, 3).
-        context.abort(grpc.StatusCode.UNIMPLEMENTED, "Falta implementar SeguirCobro")
+        if request.monto_centavos <= 0:
+            context.abort(
+                grpc.StatusCode.INVALID_ARGUMENT,
+                "El monto en centavos debe ser mayor a 0."
+            )
+
+        for i, paso in enumerate(PASOS, start=1):
+            time.sleep(1)
+            yield pagos_pb2.PasoCobro(
+                numero=i,
+                mensaje=paso
+            )
 
 
 servidor = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
