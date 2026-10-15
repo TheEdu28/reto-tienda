@@ -32,7 +32,7 @@ class PagosServicio(pagos_pb2_grpc.PagosServicer):
             monto_centavos=monto,
         )
 
-ddef SeguirCobro(self, request, context):
+def SeguirCobro(self, request, context):
         if request.monto_centavos <= 0:
             context.abort(
                 grpc.StatusCode.INVALID_ARGUMENT, 
