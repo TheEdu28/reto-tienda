@@ -6,9 +6,9 @@
 
 | Integrante | Matrícula | Rol |
 |---|---|---|
-| | | Servidor |
-| | | Cliente |
-| | | Integración (README, issues y prueba cruzada) |
+| Jesus Eduardo Lazo | 20212702 | Servidor |
+|   Ethan Jose Carbajal Guzman | | Cliente |
+| Estefhany Maribel Torres Oseguera | | Integración (README, issues y prueba cruzada) |
 
 ## Prueba cruzada
 
