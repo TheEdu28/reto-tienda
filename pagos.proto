@@ -23,6 +23,7 @@ message EstadoPago {
 message CobroRequest {
   string pedido = 1;
   int32 monto_centavos = 2;
+  string metodo = 3;
 }
 
 message PasoCobro {

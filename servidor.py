@@ -39,13 +39,21 @@ class PagosServicio(pagos_pb2_grpc.PagosServicer):
                 f"El monto debe ser mayor a 0: {request.monto_centavos}"
             )
 
-        for numero, descripcion in enumerate(PASOS, start=1):
+        # Si viene vacío o no se envió, por defecto es "tarjeta"
+        metodo = request.metodo if request.metodo else "tarjeta"
+
+        pasos = [
+            "Validando datos",
+            "Autorizando con el banco",
+            f"Cobro aprobado con {metodo}"
+        ]
+
+        for numero, descripcion in enumerate(pasos, start=1):
             time.sleep(1)
             yield pagos_pb2.PasoCobro(
                 numero=numero,
                 paso=descripcion
             )
-
 
 servidor = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 pagos_pb2_grpc.add_PagosServicer_to_server(PagosServicio(), servidor)
